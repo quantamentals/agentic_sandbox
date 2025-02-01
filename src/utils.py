@@ -1,6 +1,6 @@
 from openai import OpenAI # create custom types
 
-class Tool:
+class ToolBuilder:
     def __init__(self, name: str, func, desc) -> None:
         self.desc = desc
         self.name = name
