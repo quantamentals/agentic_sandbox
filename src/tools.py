@@ -18,7 +18,6 @@ def calculator(operation:str, a, b):
 
 calculator_tool = ToolBuilder(name="calculator", func=calculator, desc="Tool to perform math operation")
 
-
 tool_registry = {
     'calculator': calculator_tool
 }
