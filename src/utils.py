@@ -1,6 +1,10 @@
 from openai import OpenAI # create custom types
 
 class ToolBuilder:
+
+    """
+    NOTE: add packs or specific functionality via depenedency injection and build a tool object HERE???
+    """
     def __init__(self, name: str, func, desc) -> None:
         self.desc = desc
         self.name = name
@@ -8,6 +12,9 @@ class ToolBuilder:
 
     def act(self, **kwargs) -> str:
         return self.func(**kwargs)
+    
+    def build(self):
+        pass 
     
 class AgentConfig:
     def __init__(self):

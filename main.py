@@ -13,7 +13,7 @@ base_agent = Agent(
     instructions="""
         You are a helpful agent that assist a users in completing tasks using multiple tools available to you
     """,
-    functions=[tool_registry['calculator'], agent_registry['wiki_search']]
+    functions=[agent_registry['wiki_search'], tool_registry['calculator'], tool_registry['current_datetime']]
 )
 
 load_dotenv()
@@ -23,7 +23,7 @@ model = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 if __name__ == "__main__":
 
-    query = "Why is the sky blue"
+    query = "what is obama's age minus 2"
 
     agent_config = AgentConfig()
 

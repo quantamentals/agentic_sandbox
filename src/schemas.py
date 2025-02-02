@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field 
 from typing import Callable, Union, List
 
-class ToolChoice(BaseModel):
+class ActiveTool(BaseModel):
     tool_name: str = Field(..., description="Name of the tool to use")
     reason_of_choice: str = Field(..., description="Reason for choosing the tool")
 
