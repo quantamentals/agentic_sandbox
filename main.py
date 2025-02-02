@@ -20,7 +20,6 @@ load_dotenv()
 
 model = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-
 if __name__ == "__main__":
 
     query = "what is obama's age minus 2"

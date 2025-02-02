@@ -16,7 +16,6 @@ class AgentOrchestrator:
         """The Agent should reason about the appropriate actiont to take"""
         pass 
 
-
     def __choose_action(self, agent:Agent) -> ToolBuilder:
         # choose appropriate agent action request build
 
@@ -29,6 +28,8 @@ class AgentOrchestrator:
         # the resp from the LLM should come back as pydantic class the schemas the active tool
         tool_choice_resp: ActiveTool = ActiveTool(tool_name="wiki_search", reason_of_choice="hard coded resp TBU")
 
+        # print("Available Tools: ",agent.functions, '\n')
+
         # search through the agents functions for appropriate to tool builder
         active_tool_builder = [tool for tool in agent.functions if tool.name == tool_choice_resp.tool_name]
 
@@ -40,23 +41,25 @@ class AgentOrchestrator:
         # get the tools of of the main_agent: tools could be functional or agentic tools
         tool_builder = self.__choose_action(agent)
 
+        # print("tool builder chosen: ", tool_builder)
+
         # handle the age if agent is present the execute agents tool
         if tool_builder:
             if isinstance(tool_builder.func, Agent):
                 agent=tool_builder.func # the tool builder returns an agent 
-                print(f"Action <switching agent>: Now utilizing sub agent {agent.name} as tool \n")
+                print(f"Action <switching agent>: Now utilizing sub agent {agent.name}\n")
                 return agent, True
             
             # if not an agent, the execute the action itself witht base agent 
             self.__execute_action(tool_builder, agent)
         else:
-            print("No tool chosen")
+            print("Recommended Active Tool is not Found", "\n")
             agent = self.main_agent
+            print(f"Action <switching agent>: Now utilizing Main Agent: {agent.name} \n")
             return agent, True
         return agent, False
 
-
-    def __execute_action(self, tool, agent):
+    def __execute_action(self, tool:ToolBuilder, agent: Agent):
         print("EXecute FIred")
         
         if tool is None:
@@ -75,6 +78,7 @@ class AgentOrchestrator:
         """
         try:
             resp = json.loads(llm_resp)
+            print(resp)
         except:
             print("Error obtaining tool params")
             print(f"Invalid response: {resp} ")
@@ -88,7 +92,8 @@ class AgentOrchestrator:
         return AgentObservation(stop=True, final_answer="The LLM output", confidence=0.5)
 
     def execute(self, task):
-        print(f"The Task: {task}")
+        print("*"*50)
+        print(f"The Task: {task}", "\n")
         self.task=task
         total_interactions = 0
         agent = self.main_agent
@@ -97,14 +102,15 @@ class AgentOrchestrator:
 
             if self.config.max_interactions <= total_interactions:
                 print("Max interactions reached. Exiting")
+                print("*"*50)
                 return ""
 
-            print("The Current Agent: ", agent.name)
+            print("The Current Agent: ", agent.name, "\n")
             self.__thought(agent)
 
             agent, skip = self.__action(agent)
 
-            print('SKIP, ',skip)
+            # print('SKIP, ',skip)
             if skip:
                 continue
 
