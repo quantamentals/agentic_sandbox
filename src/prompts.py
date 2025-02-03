@@ -26,7 +26,7 @@ THOUGHT_PROMPT = """
 
 THOUGHT_PROMPT_STRING = (
     "Please provide a clear, detailed explanation of your step-by-step plan to address the following challenge:\n\n"
-    "{task}\n\nBegin by identifying key factors that will inform your decision-making process.\n\nNext, evaluate potential approaches using the available tools below:\n\nAvailable Tools:\n  {tools}\n\nConsider how each tool can be effectively utilized as you refine your strategy.\n\nContinuously assess and adjust your approach based on insights and new information emerging during the process.\n\nFinally, summarize your thought process and the strategy employed in resolving the challenge.\n\nEnsure that your explanation is thorough and reflects a dynamic problem-solving mindset.\n\n--- Context history inserted below:"
+    "{task}\n\nBegin by identifying key factors that will inform your decision-making process.\n\nNext, evaluate potential approaches using the available tools below:\n\nAvailable Tools:\n{tools}\n\nConsider how each tool can be effectively utilized as you refine your strategy.\n\nContinuously assess and adjust your approach based on insights and new information emerging during the process.\n\nFinally, summarize your thought process and the strategy employed in resolving the challenge.\n\nEnsure that your explanation is thorough and reflects a dynamic problem-solving mindset.\n\n--- Context history inserted below: "
 )
 
 def get_thought_prompt(task, tools):

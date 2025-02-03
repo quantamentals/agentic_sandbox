@@ -22,7 +22,6 @@ load_dotenv()
 
 model = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-model_ensemble = Ensemble()
 
 if __name__ == "__main__":
 
@@ -31,8 +30,6 @@ if __name__ == "__main__":
     agent_config = AgentConfig()
 
     agent_config.set_model_client(model)
-
-    agent_config.set_model_ensemble(ensemble=model_ensemble)
 
     agent_config.set_token_limit(1000)
 

@@ -3,6 +3,7 @@ import json
 from src.utils import AgentConfig, ToolBuilder
 from src.schemas import Agent, AgentObservation,  ActiveTool
 from src.prompts import get_thought_prompt
+from src.ensemble import Ensemble
 
 class AgentOrchestrator:
     """
@@ -11,6 +12,7 @@ class AgentOrchestrator:
     def __init__(self, config: AgentConfig, agent: Agent) -> None:
         self.main_agent = agent
         self.config = config
+        self.ensemble= Ensemble(config=config)
         self.task = ""
 
     def __retrieve_tools(self, agent) -> str:
@@ -33,7 +35,19 @@ class AgentOrchestrator:
 
         # append the context history
 
-        # use the ensemble to prompt available models
+        if not self.ensemble.history():
+            print("No previous messages available.")
+            
+        message_history=self.ensemble.history()
+        thought_prompt += message_history
+        print(thought_prompt,"\n")
+
+        # use the ensemble to promp the thought process using the Ensembles available models
+        # note
+        response = self.ensemble.execute(thought_prompt, agent, model="gpt-4o-mini")
+        print('THE RESP',response)
+        return response
+
 
     def __choose_action(self, agent:Agent) -> ToolBuilder:
         # choose appropriate agent action request build
