@@ -2,6 +2,7 @@ import inspect
 import json
 from src.utils import AgentConfig, ToolBuilder
 from src.schemas import Agent, AgentObservation,  ActiveTool
+from src.prompts import get_thought_prompt
 
 class AgentOrchestrator:
     """
@@ -12,9 +13,24 @@ class AgentOrchestrator:
         self.config = config
         self.task = ""
 
+    def __retrieve_tools(self, agent) -> str:
+        """NOTE: change this to extract agent details and turn to dict with name and tools"""
+        tools = [tool for tool in agent.functions if isinstance(tool, ToolBuilder)]
+        str_tools = [tool.name + " - " + tool.desc for tool in tools]
+        return "\n".join(str_tools)
+
     def __thought(self, agent):
-        """The Agent should reason about the appropriate actiont to take"""
-        pass 
+        """
+        The Agent should reason about the most effective action to take.
+        
+        This thought process involves iterative planning, continuous evaluation,
+        and adaptive strategy adjustment. The goal is to demonstrate a thorough,
+        self-reflective, and dynamic problem-solving approach.
+        """
+        tools = self.__retrieve_tools(agent)
+        
+        thought_prompt = get_thought_prompt(self.task, tools)
+
 
     def __choose_action(self, agent:Agent) -> ToolBuilder:
         # choose appropriate agent action request build
