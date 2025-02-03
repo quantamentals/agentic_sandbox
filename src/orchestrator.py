@@ -31,6 +31,10 @@ class AgentOrchestrator:
         
         thought_prompt = get_thought_prompt(self.task, tools)
 
+        # append the context history
+
+        # use the ensemble to prompt available models
+
 
     def __choose_action(self, agent:Agent) -> ToolBuilder:
         # choose appropriate agent action request build
