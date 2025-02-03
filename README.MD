@@ -6,6 +6,7 @@
  - Model
  - Ensemble
  - Schema
+ - Prompt
  - Tool
  - Registry
  - Util
