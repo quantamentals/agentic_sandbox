@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 from src.schemas import Agent
 from src.utils import AgentConfig
+from src.ensemble import Ensemble
 from src.tools import tool_registry
 from src.agents import agent_registry
 from src.orchestrator import AgentOrchestrator
@@ -21,6 +22,8 @@ load_dotenv()
 
 model = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+model_ensemble = Ensemble()
+
 if __name__ == "__main__":
 
     query = "what is obama's age minus 2"
@@ -28,6 +31,8 @@ if __name__ == "__main__":
     agent_config = AgentConfig()
 
     agent_config.set_model_client(model)
+
+    agent_config.set_model_ensemble(ensemble=model_ensemble)
 
     agent_config.set_token_limit(1000)
 

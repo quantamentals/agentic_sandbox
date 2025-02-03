@@ -1,4 +1,7 @@
+from typing import Optional
 from openai import OpenAI # create custom types
+
+from src.ensemble import Ensemble
 
 class ToolBuilder:
 
@@ -20,9 +23,14 @@ class AgentConfig:
     def __init__(self):
         self.max_interactions = 3
         self.model = None
+        self.ensemble = None
         self.token_limit: int = 5000
 
-    def set_model_client(self, model: OpenAI):
+    def set_model_ensemble(self, ensemble:Ensemble):
+        self.ensemble=ensemble
+        return self
+   
+    def set_model_client(self, model: Optional[OpenAI]):
         self.model = model
         return self
 

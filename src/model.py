@@ -22,6 +22,8 @@ class Model:
 
         self.gpt4omini = OpenAI(api_key=self.api_key)
 
+        self.openai = OpenAI(api_key=self.api_key) 
+
     def _validate_api_key(self):
         """
         Validate the API key.

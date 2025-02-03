@@ -1,16 +1,24 @@
 from src.model import Model
 
 class Ensemble:
-    """An is a collections of models and their methods for coordination structuring and use
+    """ A collection of models and methods for coordination, structuring, concurrent use and long running processes
     
     """
     BASE_SYSTEM_PROMPT = """ """
     
-    def __init__(self, url):
+    def __init__(self, config):
         """
         Create this Website object from the given url using the BeautifulSoup library
         """
+        self.config = config
         self.models = Model()
+        self.messages = list()
+
+    def store(self, message):
+        self.messages.append(message)
+
+    def history(self):
+        return "\n".join(self.messages)
 
     def build_system_prompt(self):
         system_prompt = self.BASE_SYSTEM_PROMPT
@@ -60,5 +68,8 @@ class Ensemble:
         # asyncio gather the call of multiple arena requests
         pass
 
-    def execute_daemon(self,model:list ):
+    def execute_daemon(self,model:str):
+        pass 
+
+    def execute_daemons(self, models:list):
         pass 

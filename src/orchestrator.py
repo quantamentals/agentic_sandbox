@@ -35,7 +35,6 @@ class AgentOrchestrator:
 
         # use the ensemble to prompt available models
 
-
     def __choose_action(self, agent:Agent) -> ToolBuilder:
         # choose appropriate agent action request build
 
