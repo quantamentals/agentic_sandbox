@@ -35,6 +35,9 @@ class Ensemble:
         # NOTE: allows me to insert base user prompt additions
         return prompt  # Placeholder implementation; customize as needed
 
+    def build_message(self, role, content, agent):
+        return {"role": role, "content":content, "agent":agent.name}
+
     def build_chat_messages(self, agent, prompt):
         """Build the chat messages for the model."""
         return [
@@ -42,7 +45,7 @@ class Ensemble:
             {"role": "user", "content": self.build_user_prompt(prompt)}
         ]
 
-    def execute(self, prompt: str, agent: Agent, output_schema: Optional[Type[BaseModel]] = None, model="gpt-4o-mini"):
+    def evaluate(self, prompt: str, agent: Agent, output_schema: Optional[Type[BaseModel]] = None, model="gpt-4o-mini"):
         """
         Execute the prompt using the specified model.
 
@@ -91,5 +94,5 @@ class Ensemble:
         else:
             raise ValueError(f"Unsupported model: {model}")
         
-    def execute_daemon(self,model:str):
+    def evaluate_daemon(self,model:str):
         pass 

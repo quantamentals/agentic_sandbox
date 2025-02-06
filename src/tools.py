@@ -31,7 +31,9 @@ def current_datetime():
 
 
 calculator_tool = ToolBuilder(name="calculator", func=calculator, desc="Tool to perform math operation")
+
 wiki_query_tool = ToolBuilder(name="wiki_query", func=query_wiki, desc="Too query for a wikipedia page")
+
 current_datetime_tool = ToolBuilder(name="current_datetime", func=current_datetime, desc="The current datetime")
 
 tool_registry = {

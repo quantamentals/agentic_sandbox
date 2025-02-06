@@ -2,7 +2,7 @@ import inspect
 import json
 from src.utils import AgentConfig, ToolBuilder
 from src.schemas import Agent, AgentObservation,  ActiveTool
-from src.prompts import get_thought_prompt
+from src.prompts import get_thought_prompt, get_best_tool_prompt
 from src.ensemble import Ensemble
 
 class AgentOrchestrator:
@@ -29,44 +29,16 @@ class AgentOrchestrator:
         and adaptive strategy adjustment. The goal is to demonstrate a thorough,
         self-reflective, and dynamic problem-solving approach.
         """
-        tools = self.__retrieve_tools(agent)
-        
+        tools = self.__retrieve_tools(agent)        
         thought_prompt = get_thought_prompt(self.task, tools)
-
-        # append the context history
-
         if not self.ensemble.history():
             print("No previous messages available.")
-            
         message_history=self.ensemble.history()
         thought_prompt += message_history
-        print(thought_prompt,"\n")
-
-        # use the ensemble to promp the thought process using the Ensembles available models
-        # note
-        response = self.ensemble.execute(thought_prompt, agent, model="gpt-4o-mini")
-        print('THE RESP',response)
-        return response
-
-
-    def __choose_action(self, agent:Agent) -> ToolBuilder:
-        # choose appropriate agent action request build
-
-        # given  current agent use LLM choose and action the appropriate tool 
-
-        # execute LLM reps to either OpenRouter, OpenAI, Ollama or Claude via Model Factory / Registry
-
-        # NOTE: can a simple ML or NLP model achieve this more efficiently than LLM call???
-
-        # the resp from the LLM should come back as pydantic class the schemas the active tool
-        tool_choice_resp: ActiveTool = ActiveTool(tool_name="wiki_search", reason_of_choice="hard coded resp TBU")
-
-        # print("Available Tools: ",agent.functions, '\n')
-
-        # search through the agents functions for appropriate to tool builder
-        active_tool_builder = [tool for tool in agent.functions if tool.name == tool_choice_resp.tool_name]
-
-        return active_tool_builder[0] if active_tool_builder else None
+        response = self.ensemble.evaluate(thought_prompt, agent, model=self.config.model)
+        print(f'Agent {agent.name} THE THOUGHT RESP: ', response)
+        message=self.ensemble.build_message(role="assistant", content=response, agent=agent)
+        self.ensemble.store(message)
 
     def __action(self, agent:Agent) -> tuple[Agent, bool]:
         """The Agent should decide on the action to take"""
@@ -91,10 +63,38 @@ class AgentOrchestrator:
             print(f"Action <switching agent>: Now utilizing Main Agent: {agent.name} \n")
             return agent, True
         return agent, False
+    
+    def __choose_action(self, agent:Agent) -> ToolBuilder:
+
+        tools =  self.__retrieve_tools(agent=agent)
+        # choose appropriate agent action request build
+
+        choose_best_tool_prompt = get_best_tool_prompt()
+
+        prompt = choose_best_tool_prompt + self.ensemble
+
+        # given  current agent use LLM choose and action the appropriate tool 
+
+        # execute LLM reps to either OpenRouter, OpenAI, Ollama or Claude via Model Factory / Registry
+
+        # NOTE: can a simple ML or NLP model achieve this more efficiently than LLM call???
+
+        # the resp from the LLM should come back as pydantic class the schemas the active tool
+        tool_choice_resp: ActiveTool = ActiveTool(tool_name="wiki_search", reason_of_choice="hard coded resp TBU")
+
+        # print("Available Tools: ",agent.functions, '\n')
+
+        # search through the agents functions for appropriate to tool builder
+        active_tool_builder = [tool for tool in agent.functions if tool.name == tool_choice_resp.tool_name]
+
+        return active_tool_builder[0] if active_tool_builder else None
+
 
     def __execute_action(self, tool:ToolBuilder, agent: Agent):
-        print("EXecute FIred")
+        print("Execute FIred")
         
+        get_tools_prompt = get_tools_prompt()
+
         if tool is None:
             return
         

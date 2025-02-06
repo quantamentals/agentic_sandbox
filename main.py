@@ -20,8 +20,7 @@ base_agent = Agent(
 
 load_dotenv()
 
-model = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
+model = "gpt-4o-mini"
 
 if __name__ == "__main__":
 

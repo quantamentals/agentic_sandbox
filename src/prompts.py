@@ -1,5 +1,4 @@
 # THOUGHT PROMPTS:
-
 THOUGHT_PROMPT = """
         Please provide a clear, detailed explanation of your step-by-step plan to address the following challenge:
 
@@ -32,6 +31,20 @@ THOUGHT_PROMPT_STRING = (
 def get_thought_prompt(task, tools):
     """Generates a detailed thought prompt with provided request and available tools."""
     return THOUGHT_PROMPT_STRING.format(
+        task=task,
+        tools=tools
+    )
+
+
+# Best Tool 
+BEST_TOOL_PROMPT_STRING = (
+    "To solve the following task {task}. Select the best to of the available to achieve, if there is a suitable tool in select. Please see the following tool for choice: {tools} "
+
+)
+
+def get_best_tool_prompt(task, tools):
+    """Generates a detailed thought prompt with provided request and available tools."""
+    return BEST_TOOL_PROMPT_STRING.format(
         task=task,
         tools=tools
     )

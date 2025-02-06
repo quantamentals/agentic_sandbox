@@ -22,7 +22,7 @@ class ToolBuilder:
 class AgentConfig:
     def __init__(self):
         self.max_interactions = 3
-        self.model = None
+        self.model:str = None
         self.ensemble = None
         self.token_limit: int = 5000
 
@@ -30,7 +30,7 @@ class AgentConfig:
         self.ensemble=ensemble
         return self
    
-    def set_model_client(self, model: Optional[OpenAI]):
+    def set_model_client(self, model:str):
         self.model = model
         return self
 
