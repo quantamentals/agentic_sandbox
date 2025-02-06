@@ -1,10 +1,6 @@
-from typing import Optional
-from openai import OpenAI # create custom types
-
 from src.ensemble import Ensemble
 
 class ToolBuilder:
-
     """
     NOTE: add packs or specific functionality via depenedency injection and build a tool object HERE???
     """

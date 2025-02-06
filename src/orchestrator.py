@@ -2,7 +2,7 @@ import inspect
 import json
 from src.utils import AgentConfig, ToolBuilder
 from src.schemas import Agent, AgentObservation,  ActiveTool
-from src.prompts import get_thought_prompt, get_best_tool_prompt
+from src.prompts import get_thought_prompt, get_best_tool_prompt, get_observation_prompt
 from src.ensemble import Ensemble
 
 class AgentOrchestrator:
@@ -21,7 +21,7 @@ class AgentOrchestrator:
         str_tools = [tool.name + " - " + tool.desc for tool in tools]
         return "\n".join(str_tools)
 
-    def __thought(self, agent):
+    def __thought(self, agent) -> None:
         """
         The Agent should reason about the most effective action to take.
         
@@ -46,8 +46,6 @@ class AgentOrchestrator:
         # get the tools of of the main_agent: tools could be functional or agentic tools
         tool_builder = self.__choose_action(agent)
 
-        # print("tool builder chosen: ", tool_builder)
-
         # handle the age if agent is present the execute agents tool
         if tool_builder:
             if isinstance(tool_builder.func, Agent):
@@ -65,28 +63,26 @@ class AgentOrchestrator:
         return agent, False
     
     def __choose_action(self, agent:Agent) -> ToolBuilder:
+        tools = self.__retrieve_tools(agent=agent)
 
-        tools =  self.__retrieve_tools(agent=agent)
-        # choose appropriate agent action request build
-
-        choose_best_tool_prompt = get_best_tool_prompt()
-
-        prompt = choose_best_tool_prompt + self.ensemble
+        # choose appropriate prompt agent action request build
+        choose_best_tool_prompt = get_best_tool_prompt(task=self.task, tools=tools)
+        prompt = choose_best_tool_prompt + self.ensemble.history()
 
         # given  current agent use LLM choose and action the appropriate tool 
-
         # execute LLM reps to either OpenRouter, OpenAI, Ollama or Claude via Model Factory / Registry
-
         # NOTE: can a simple ML or NLP model achieve this more efficiently than LLM call???
-
         # the resp from the LLM should come back as pydantic class the schemas the active tool
-        tool_choice_resp: ActiveTool = ActiveTool(tool_name="wiki_search", reason_of_choice="hard coded resp TBU")
-
-        # print("Available Tools: ",agent.functions, '\n')
-
+        # tool_choice_resp: ActiveTool = ActiveTool(tool_name="wiki_search", reason_of_choice="hard coded resp TBU")
+        tool_choice_resp = self.ensemble.evaluate(prompt=prompt, agent=agent, output_schema=ActiveTool)
+        
+        message = self.ensemble.build_message(role="assistant", 
+                                              content=f"Please use the following tool: {tool_choice_resp.tool_name} Reason: {tool_choice_resp.reason} ", 
+                                              agent=agent)
+        
+        self.ensemble.store(message=message)
         # search through the agents functions for appropriate to tool builder
         active_tool_builder = [tool for tool in agent.functions if tool.name == tool_choice_resp.tool_name]
-
         return active_tool_builder[0] if active_tool_builder else None
 
 
@@ -116,13 +112,23 @@ class AgentOrchestrator:
             print("Error obtaining tool params")
             print(f"Invalid response: {resp} ")
             return
-        
+    
         task_result = tool.func(**resp)
         print(f"Task Result: {task_result}")
 
-    def __observation(self) -> AgentObservation:
+    def __observation(self, agent) -> AgentObservation:
         """Execute an action and observe feedback from action"""
-        return AgentObservation(stop=True, final_answer="The LLM output", confidence=0.5)
+        prompt = get_observation_prompt(task=self.task, 
+                                        history=self.ensemble.history())
+        observation_resp:AgentObservation = self.ensemble.evaluate(prompt=prompt, agent=agent, output_schema=AgentObservation)
+        print("*"*50)
+        message = self.ensemble.build_message(role="assistant", content=observation_resp.final_answer, agent=agent)
+        self.ensemble.store(message=message)
+        print(f"Agent <{agent.name}> Observation")
+        print(f"Observation: {observation_resp.final_answer}")
+        print(f"Confidence Interval: {observation_resp.confidence}")
+
+        return observation_resp
 
     def execute(self, task):
         print("*"*50)
@@ -143,7 +149,6 @@ class AgentOrchestrator:
 
             agent, skip = self.__action(agent)
 
-            # print('SKIP, ',skip)
             if skip:
                 continue
 

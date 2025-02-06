@@ -3,7 +3,6 @@ import wikipedia
 from .utils import ToolBuilder
 
 def calculator(operation:str, a, b):
-
     if operation == "add":
         return a + b
     
@@ -28,7 +27,6 @@ def query_wiki(query):
 
 def current_datetime():
     return datetime.date.today()
-
 
 calculator_tool = ToolBuilder(name="calculator", func=calculator, desc="Tool to perform math operation")
 
