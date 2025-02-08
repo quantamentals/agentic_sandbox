@@ -6,7 +6,11 @@ from src.schemas import Agent
 class Ensemble:
     """A collection of models and methods for coordination, structuring, concurrent use, and long-running processes."""
 
-    BASE_SYSTEM_PROMPT = """ """
+    BASE_SYSTEM_PROMPT = """You are a helpful assistant that assists the user in completing a task. Don't ask for user input. 
+Important! You don't know the date of today, therefore you must use the Date_of_today tool to get the date of today. 
+Important! You don't know math, therefore you must use the Calculator tool for math operations       
+Given the following information from the context history provide for the user's task using only this information.
+"""
 
     def __init__(self, config):
         """
@@ -22,7 +26,7 @@ class Ensemble:
 
     def history(self):
         """Retrieve the message history as a concatenated string."""
-        return "\n".join(self.messages)
+        return self.messages
 
     def build_system_prompt(self, agent):
         """Build the system prompt for the agent."""
@@ -75,14 +79,19 @@ class Ensemble:
                 "model": agent.model,
                 "temperature": 0.1,
                 "max_tokens": self.config.token_limit,
-                "messages": chat_messages
+                "messages": chat_messages,
             }
 
             if output_schema:
-                params['response_format'] = output_schema
-
-            response = self.models.gpt4omini.chat.completions.create(**params)
-            return response.choices[0].message.content
+                params["response_format"]=output_schema
+                # Use parse with corrected schema structure
+                response = self.models.gpt4omini.beta.chat.completions.parse(**params)
+                return response
+            else:
+                # Standard completion without schema
+                response = self.models.gpt4omini.chat.completions.create(**params)
+                return response.choices[0].message.content
+                    
 
         elif model == "deepseek-r1:7b":
             response = self.models.ollama.chat.completions.create(
