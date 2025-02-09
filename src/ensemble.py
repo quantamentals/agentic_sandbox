@@ -91,7 +91,24 @@ Given the following information from the context history provide for the user's 
                 # Standard completion without schema
                 response = self.models.gpt4omini.chat.completions.create(**params)
                 return response.choices[0].message.content
-                    
+            
+        elif model == "gpt-4o":
+            params = {
+                "model": agent.model,
+                "temperature": 0.1,
+                "max_tokens": self.config.token_limit,
+                "messages": chat_messages,
+            }
+
+            if output_schema:
+                params["response_format"]=output_schema
+                # Use parse with corrected schema structure
+                response = self.models.gpt4omini.beta.chat.completions.parse(**params)
+                return response
+            else:
+                # Standard completion without schema
+                response = self.models.gpt4omini.chat.completions.create(**params)
+                return response.choices[0].message.content                   
 
         elif model == "deepseek-r1:7b":
             response = self.models.ollama.chat.completions.create(

@@ -4,7 +4,7 @@ from src.tools import tool_registry
 from src.agents import agent_registry
 from src.orchestrator import AgentOrchestrator
 
-model = "gpt-4o-mini"
+model = "gpt-4o"
 
 base_agent = Agent(
     name="MultiToolAgent",
@@ -13,7 +13,7 @@ base_agent = Agent(
     """,
     functions=[agent_registry['wiki_search'], 
                tool_registry['calculator'], 
-               tool_registry['current_datetime'],
+               tool_registry['Date_of_today'],
     ]
 )
 
@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     agent_config.set_token_limit(1000)
 
-    agent_config.set_max_interactions(5)
+    agent_config.set_max_interactions(10)
 
     orchestrator = AgentOrchestrator(agent_config, base_agent)
 

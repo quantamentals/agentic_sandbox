@@ -15,8 +15,6 @@ class AgentOrchestrator:
         self.ensemble= Ensemble(config=config)
         self.task = ""
 
-
-
     def execute(self, task):
         print("*"*50)
         print(f"The Task: {task}", "\n")
@@ -42,15 +40,18 @@ class AgentOrchestrator:
 
             observation = self.__observation(agent)
 
-            if observation:
-                content_dict = json.loads(observation.choices[0].message.content)
+            print("THE OBSERVATION: ",observation)
 
-                if content_dict.get('stop'):
-                    print("Thought: I know the final answer. \n")
-                    final_answer = content_dict.get('final_answer', '')
-                    print(f"Final Answer: {final_answer}")
-                    return final_answer
+            # if confidence is less than certain threshold switch to main agent for broader agent/tool exposure
+            # if float(observation.confidence) <= 0.7:
+            #     agent = self.main_agent
+            #     print(f"Action <switching agent>: Now utilizing sub agent {agent.name}\n")
+            #     continue
         
+            if observation.stop:
+                    print("Thought: I know the final answer. \n")
+                    print(f"Final Answer: {observation.final_answer}")
+                    return observation
 
     def __thought(self, agent) -> None:
         """
@@ -158,7 +159,6 @@ class AgentOrchestrator:
                                                 agent=agent)
         self.ensemble.store(message=message)
 
-
         print("THE RESP for task exec: ", resp)
 
         task_result = tool.func(resp)
@@ -173,11 +173,34 @@ class AgentOrchestrator:
     def __observation(self, agent) -> AgentObservation:
         """Execute an action and observe feedback from action"""
 
+        # Build the observation prompt and message history
+        message_history = "\n".join([message['content'] for message in self.ensemble.history()])
+
+        prompt = get_observation_prompt(task=self.task, history=message_history)
+
+        print('The observation prompt: ', prompt)
+
         # observe responses for confidence of achieving with available info
-        # if confidence is less than certain threshold switch to main agent
-        # use main agent to identify the appropriate agent  / tool 
-        # take the previous context into consideration to find where you are in the process
-        pass 
+
+        observation_resp = self.ensemble.evaluate(prompt=prompt,agent=agent, output_schema=AgentObservation)
+
+        res = observation_resp.choices[0].message.parsed
+
+
+        # Access the final_answer from the content dictionary
+        final_answer = res.final_answer
+        confidence = res.confidence
+
+        print("CONFIDENCE: ", confidence)
+        
+        # Build the message with the final_answer
+        message = self.ensemble.build_message(role="assistant", content=final_answer, agent=agent)
+        
+        self.ensemble.store(message=message)
+
+        return res
+
+
 
     def __retrieve_tools(self, agent) -> str:
         """NOTE: change this to extract agent details and turn to dict with name and tools"""
