@@ -8,6 +8,8 @@ from src.ensemble import Ensemble
 class AgentOrchestrator:
     """
     In this architecture the Orchestrater executes a specific agentic pattern, this base agent executes ReACt 
+
+    Orchestrator will be of various patterns but will use Ensembles and Agents alike to execute a specific flow
     """
     def __init__(self, config: AgentConfig, agent: Agent) -> None:
         self.main_agent = agent

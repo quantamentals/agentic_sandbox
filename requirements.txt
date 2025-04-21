@@ -21,3 +21,17 @@ tqdm==4.67.1
 typing_extensions==4.12.2
 urllib3==2.3.0
 wikipedia==1.4.0
+
+
+fastapi
+uvicorn
+aiofiles==23.1.0
+redis==4.6.0
+python-jose==3.3.0
+numpy
+pandas
+psycopg2-binary==2.9.6
+python-decouple==3.8
+sseclient-py==1.8.0
+python-multipart==0.0.6
+

@@ -4,7 +4,16 @@ from pydantic import BaseModel
 from src.schemas import Agent
 
 class Ensemble:
-    """A collection of models and methods for coordination, structuring, concurrent use, and long-running processes."""
+    """A collection of models and methods for coordination, structuring, concurrent use, and long-running processes.
+    
+    NOTE: I need to make a an Ensemble more generalizable to be used with multi agent CLI or inference api. Ensembles should be useful for Orchestrators of various patterns and pure api use with a specific agent. All multi agent activity must happen via an Orchestrator
+
+    Ensembles should be able to fire off stand alone completion and embeddings 
+    via all models in the Ensemble for now: Ollama, OpenAi and eventually OpenRouter and Claude
+
+    Ensembles should be able to work with CSV, in memory, transactional, analytical and vectordb 
+
+    """
 
     BASE_SYSTEM_PROMPT = """You are a helpful assistant that assists the user in completing a task. Don't ask for user input. 
 Important! You don't know the date of today, therefore you must use the Date_of_today tool to get the date of today. 
@@ -12,7 +21,7 @@ Important! You don't know math, therefore you must use the Calculator tool for m
 Given the following information from the context history provide for the user's task using only this information.
 """
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """
         Initialize the Ensemble with the given configuration.
         """
@@ -121,4 +130,14 @@ Given the following information from the context history provide for the user's 
             raise ValueError(f"Unsupported model: {model}")
         
     def evaluate_daemon(self,model:str):
+        pass 
+
+    def get_embedding(self):
+        pass 
+
+    
+    def retrieve_from_storage(self):
+        pass 
+
+    def similarity_search(self):
         pass 
