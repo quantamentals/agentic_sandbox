@@ -4,14 +4,19 @@ from pydantic import BaseModel
 from src.schemas import Agent
 
 class Ensemble:
-    """A collection of models and methods for coordination, structuring, concurrent use, and long-running processes.
+    """A collection of models, agents and methods for coordination, structuring, concurrent use, and long-running processes.
     
     NOTE: I need to make a an Ensemble more generalizable to be used with multi agent CLI or inference api. Ensembles should be useful for Orchestrators of various patterns and pure api use with a specific agent. All multi agent activity must happen via an Orchestrator
 
+    
     Ensembles should be able to fire off stand alone completion and embeddings 
     via all models in the Ensemble for now: Ollama, OpenAi and eventually OpenRouter and Claude
 
     Ensembles should be able to work with CSV, in memory, transactional, analytical and vectordb 
+
+    I should be able to  inject the ensemble with agents into to interact with collection of models and other agents / tools???
+
+
 
     """
 

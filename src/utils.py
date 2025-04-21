@@ -3,6 +3,7 @@ from src.ensemble import Ensemble
 class ToolBuilder:
     """
     NOTE: add packs or specific functionality via depenedency injection and build a tool object HERE???
+    #NOTE: I need to reconcile tool builder and the the new agency as to the CRUD of agents for orchestration and api use
     """
     def __init__(self, name: str, func, desc) -> None:
         self.desc = desc

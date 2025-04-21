@@ -2,6 +2,8 @@ from .schemas import Agent
 from .utils import ToolBuilder
 from .tools import tool_registry
 
+# NOTE: move to the agency post reconciliation of agents constructs
+
 wiki_search_agent = Agent(
     name="wiki_agent",
     instructions="you are a helpful wikipedia search agent that find information based on a provided task and wikipedia contents",
