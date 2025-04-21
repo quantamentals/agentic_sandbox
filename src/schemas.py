@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field 
-from typing import Callable, Union, List
+from typing import Callable, Union, List, Any
 
 class ActiveTool(BaseModel):
     tool_name: str = Field(..., description="Name of the tool to use")
@@ -16,3 +16,14 @@ class Agent(BaseModel):
     instructions: Union[str, Callable[[], str]] = "You are a helpful agent."
     functions: List = []
 
+class LLMResponse(BaseModel):
+    tools: list[ActiveTool]
+    message: str
+
+class Task(BaseModel):
+    context: Any
+    input: str 
+    output: LLMResponse
+
+class Event(BaseModel):
+    pass 

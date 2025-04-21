@@ -37,6 +37,10 @@ agent_registry = {
     'wiki_search': wiki_search_tool
 }
 
+vs AgentService with dependency injected Agents or Registry
+
+or AgentRegistry as the base agent
+
 
 """
 

@@ -202,8 +202,6 @@ class AgentOrchestrator:
 
         return res
 
-
-
     def __retrieve_tools(self, agent) -> str:
         """NOTE: change this to extract agent details and turn to dict with name and tools"""
         tools = [tool for tool in agent.functions if isinstance(tool, ToolBuilder)]

@@ -16,8 +16,6 @@ class Ensemble:
 
     I should be able to  inject the ensemble with agents into to interact with collection of models and other agents / tools???
 
-
-
     """
 
     BASE_SYSTEM_PROMPT = """You are a helpful assistant that assists the user in completing a task. Don't ask for user input. 

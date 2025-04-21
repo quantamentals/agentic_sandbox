@@ -18,8 +18,18 @@ class UserIntentAgent(BaseAgent):
         
         return self.ensemble.evaluate(prompt=task_prompt, agent=self)
     
+    def is_action(self):
+        # should invoke a particular agent based on command or action
+        pass
 
+    def is_tool_request(self):
+        # should invoke a tool with the provided params
+        pass
 
+    def is_information_request(self):
+        # should pass a ragged query for convesational response
+        pass
+    
 class JSONAgent(BaseAgent):
 
     def __init__(self, name, ensemble):
@@ -35,3 +45,9 @@ class JSONAgent(BaseAgent):
         chat_message = self.ensemble.build_chat_messages(agent=self,prompt=task_prompt)
         
         return self.ensemble.evaluate(prompt=task_prompt, agent=self)
+    
+class CSVAgent(BaseAgent):
+    pass 
+
+class InMemoryDBAgent(BaseAgent):
+    pass 
